@@ -1,6 +1,6 @@
 #### StatsD client based on Netty
 [![Build Status](https://travis-ci.org/Nov11/statsd-client.svg?branch=master)](https://travis-ci.org/Nov11/statsd-client)
-
+[![Coverage Status](https://coveralls.io/repos/github/Nov11/statsd-client/badge.svg?branch=master)](https://coveralls.io/github/Nov11/statsd-client?branch=master)
 
 
 #### test by using nc to establish a localhost udp server
