@@ -1,24 +1,18 @@
 package io.github.nov11.udp;
 
-import io.github.nov11.MetricSender;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.DatagramChannel;
-import io.netty.channel.socket.nio.NioDatagramChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-public class UdpPipelineClient extends UdpClient{
+public class UdpPipelineClient extends UdpClient {
+    private static final List<ChannelHandler> handlers = Arrays.asList(new IdleStateHandler(0, 1, 0)
+            , new MetricAggregationHandler());
+
     public UdpPipelineClient(String host, int port) {
-        super(host, port, Collections.singletonList(new MetricAggregationHandler()));
+        super(host, port, handlers);
     }
 
     public static void main(String[] args) {
