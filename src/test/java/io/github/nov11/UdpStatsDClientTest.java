@@ -3,6 +3,7 @@ package io.github.nov11;
 import io.netty.util.ResourceLeakDetector;
 import org.junit.*;
 
+import java.util.Random;
 import java.util.concurrent.BlockingDeque;
 
 public class UdpStatsDClientTest {
@@ -14,8 +15,9 @@ public class UdpStatsDClientTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        client = UdpStatsDClient.build("prefix", "localhost", 1455);
-        server = new DumbUdpServer(1455);
+        int port = (int) (Math.random() * 60000);
+        client = UdpStatsDClient.build("prefix", "localhost", port);
+        server = new DumbUdpServer(port);
         blockingDeque = server.getMessage();
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
     }
