@@ -52,11 +52,7 @@ public class UdpClient implements MetricSender {
     }
 
     public void send(String s) {
-        try {
-            channel.writeAndFlush(s).sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        channel.writeAndFlush(s);
     }
 
     @Override

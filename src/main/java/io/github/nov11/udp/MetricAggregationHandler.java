@@ -56,7 +56,6 @@ public class MetricAggregationHandler extends ChannelDuplexHandler {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
-        logger.info("userEventTriggered");
         if (!(evt instanceof IdleStateEvent)) {
             return;
         }
