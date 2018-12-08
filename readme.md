@@ -1,4 +1,5 @@
-#### StatsD client build on Netty
+#### StatsD client based on Netty
+[![Build Status](https://travis-ci.org/Nov11/statsd-client.svg?branch=master)](https://travis-ci.org/Nov11/statsd-client)
 
 
 
