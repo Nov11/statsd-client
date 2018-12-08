@@ -9,6 +9,7 @@ public class MetricAggregationHandlerTest {
     private static EmbeddedChannel embeddedChannel;
     private final String number = "0123456789";
     private final String five = "12345";
+    private final String two = "12";
     private final int packetSize = 10;
     private MetricAggregationHandler handler;
 
@@ -35,5 +36,17 @@ public class MetricAggregationHandlerTest {
         Assert.assertEquals(five, embeddedChannel.readOutbound());
         Assert.assertEquals(0, embeddedChannel.outboundMessages().size());
         Assert.assertEquals(5, handler.remainMsgLength());
+    }
+
+    @Test
+    public void writeShortMsgTest() {
+        Assert.assertFalse(embeddedChannel.writeOutbound(two));
+        Assert.assertFalse(embeddedChannel.writeOutbound(two));
+        Assert.assertFalse(embeddedChannel.writeOutbound(two));
+        Assert.assertTrue(embeddedChannel.writeOutbound(number));
+        Assert.assertEquals("12\n12\n12", embeddedChannel.readOutbound());
+        Assert.assertEquals(number, embeddedChannel.readOutbound());
+        Assert.assertEquals(0, embeddedChannel.outboundMessages().size());
+        Assert.assertEquals(0, handler.remainMsgLength());
     }
 }
