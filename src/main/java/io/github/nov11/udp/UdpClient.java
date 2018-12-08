@@ -59,10 +59,4 @@ public class UdpClient implements MetricSender {
     public void shutdown() {
         worker.shutdownGracefully();
     }
-
-    public static void main(String[] args) {
-        UdpClient udpClient = new UdpClient("127.0.0.1", 9000);
-        udpClient.send("hello");
-        udpClient.send("world");
-    }
 }
