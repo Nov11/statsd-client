@@ -12,10 +12,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UdpClientBenchmark1MegaTest {
-    private static final Logger logger = LoggerFactory.getLogger(UdpClientBenchmark1MegaTest.class);
-    private static final int port = 60000;
-    private static final int messageCount = 1000000;
+public class UdpClientBenchmarkTest {
+    private static final Logger logger = LoggerFactory.getLogger(UdpClientBenchmarkTest.class);
+    private static int port = 60000;
+    private static int messageCount = 10000;
     private static final int oneKilo = 1000;
     private static final int delay = 20000;
     private UdpBenchmarkServer server;
@@ -27,6 +27,7 @@ public class UdpClientBenchmark1MegaTest {
 
     @Before
     public void setUp() throws Exception {
+        port = (int) (Math.random() * 60000);
         server = new UdpBenchmarkServer(port);
     }
 
@@ -36,7 +37,24 @@ public class UdpClientBenchmark1MegaTest {
     }
 
     @Test
-    public void udpPipelineClient() throws InterruptedException {
+    public void pipeline1000k() throws InterruptedException {
+        messageCount = 1000000;
+        udpPipelineClient();
+    }
+
+    @Test
+    public void pipeline100k() throws InterruptedException {
+        messageCount = 100000;
+        udpPipelineClient();
+    }
+
+    @Test
+    public void pipeline10k() throws InterruptedException {
+        messageCount = 10000;
+        udpPipelineClient();
+    }
+
+    private void udpPipelineClient() throws InterruptedException {
         StatsDClient client = UdpStatsDClient.buildClientSupportPipeline("prefix", "localhost", port);
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
@@ -47,8 +65,8 @@ public class UdpClientBenchmark1MegaTest {
         client.shutdown();
     }
 
-    @Test
-    public void udpNettyClient() throws InterruptedException {
+
+    private void udpNettyClient() throws InterruptedException {
         StatsDClient client = UdpStatsDClient.build("prefix", "localhost", port);
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
@@ -59,8 +77,8 @@ public class UdpClientBenchmark1MegaTest {
         client.shutdown();
     }
 
-    @Test
-    public void timGroupNonblockingStatsDClient() throws InterruptedException {
+
+    private void timGroupNonblockingStatsDClient() throws InterruptedException {
         com.timgroup.statsd.StatsDClient client = new NonBlockingStatsDClient("prefix", "localhost", port,
                 new StatsDClientErrorHandler() {
                     @Override

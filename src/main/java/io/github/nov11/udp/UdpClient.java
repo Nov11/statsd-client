@@ -57,6 +57,10 @@ public class UdpClient implements MetricSender {
 
     @Override
     public void shutdown() {
-        worker.shutdownGracefully();
+        try {
+            worker.shutdownGracefully().sync();
+        } catch (InterruptedException e) {
+            //ignore
+        }
     }
 }
