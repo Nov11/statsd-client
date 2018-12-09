@@ -104,7 +104,7 @@ public class UdpBenchmarkServer {
                     .append("\n");
             builder.append("data received:\t\t").append(contentOfByte).append(" bytes")
                     .append("\n");
-            builder.append("data rate:\t\t\t")
+            builder.append("data rate:\t\t")
                     .append(decimalFormat.format((1.0 * contentOfByte) / time))
                     .append(" byte / million second")
                     .append("\n");

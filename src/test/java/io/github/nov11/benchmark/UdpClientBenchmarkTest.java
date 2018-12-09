@@ -18,9 +18,9 @@ public class UdpClientBenchmarkTest {
     private static final int N_1000K = 1000000;
     private static final int N_100K = 100000;
     private static final int N_10k = 10000;
-    private static final int delay1000k = 40000;
-    private static final int delay100k = 5000;
-    private static final int delay10k = 1000;
+    private static final int delay1000k = 60000;
+    private static final int delay100k = 8000;
+    private static final int delay10k = 2000;
     private static int port;
     private UdpBenchmarkServer server;
 
