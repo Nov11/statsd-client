@@ -1,7 +1,6 @@
 package io.github.nov11.benchmark;
 
 import com.timgroup.statsd.NonBlockingStatsDClient;
-import com.timgroup.statsd.StatsDClientErrorHandler;
 import io.github.nov11.StatsDClient;
 import io.github.nov11.UdpStatsDClient;
 import io.netty.util.ResourceLeakDetector;
@@ -11,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+
+import static io.github.nov11.Util.getRandomPort;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UdpClientBenchmarkTest {
@@ -31,7 +32,7 @@ public class UdpClientBenchmarkTest {
 
     @Before
     public void setUp() throws Exception {
-        port = (int) (Math.random() * 60000);
+        port = getRandomPort();
         server = new UdpBenchmarkServer(port);
     }
 
@@ -115,12 +116,7 @@ public class UdpClientBenchmarkTest {
 
     private void timGroupNonblockingStatsDClient(int messageCount, int port) throws InterruptedException {
         com.timgroup.statsd.StatsDClient client = new NonBlockingStatsDClient("prefix", "localhost", port,
-                new StatsDClientErrorHandler() {
-                    @Override
-                    public void handle(Exception exception) {
-                        logger.error("ex:", exception);
-                    }
-                });
+                exception -> logger.error("ex:", exception));
         long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);

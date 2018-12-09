@@ -3,8 +3,9 @@ package io.github.nov11;
 import io.netty.util.ResourceLeakDetector;
 import org.junit.*;
 
-import java.util.Random;
 import java.util.concurrent.BlockingDeque;
+
+import static io.github.nov11.Util.getRandomPort;
 
 public class UdpStatsDClientTest {
     private static final String METRIC = "test-METRIC";
@@ -15,7 +16,7 @@ public class UdpStatsDClientTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        int port = (int) (Math.random() * 60000);
+        int port = getRandomPort();
         client = UdpStatsDClient.build("prefix", "localhost", port);
         server = new DumbUdpServer(port);
         blockingDeque = server.getMessage();

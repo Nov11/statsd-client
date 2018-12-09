@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingDeque;
 
+import static io.github.nov11.Util.getRandomPort;
+
 public class UdpPipelineClientTest {
     private static final Logger logger = LoggerFactory.getLogger(UdpPipelineClientTest.class);
     private static final String METRIC = "test-METRIC";
@@ -17,7 +19,7 @@ public class UdpPipelineClientTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        int port = (int) (Math.random() * 60000);
+        int port = getRandomPort();
         logger.info("PORT: {}", port);
         client = UdpStatsDClient.buildClientSupportPipeline("prefix", "localhost", port);
         server = new DumbUdpServer(port);
