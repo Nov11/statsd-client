@@ -79,7 +79,7 @@ public class UdpBenchmarkServer {
             receivedPacket++;
             messageOfLastSecond.getAndAdd(1);
             if (firstReceived == 0) {
-                scheduledExecutorService.schedule(this::releaseIfIdleForOneSecond, 1, TimeUnit.SECONDS);
+                scheduledExecutorService.schedule(this::releaseIfIdleForOneSecond, 2, TimeUnit.SECONDS);
                 firstReceived = System.currentTimeMillis();
             }
             ByteBuf byteBuf = msg.content();
@@ -100,7 +100,7 @@ public class UdpBenchmarkServer {
                 countDownLatch.countDown();
                 scheduledExecutorService.shutdownNow();
             } else {
-                scheduledExecutorService.schedule(this::releaseIfIdleForOneSecond, 1, TimeUnit.SECONDS);
+                scheduledExecutorService.schedule(this::releaseIfIdleForOneSecond, 2, TimeUnit.SECONDS);
                 messageOfLastSecond.set(0);
             }
         }
