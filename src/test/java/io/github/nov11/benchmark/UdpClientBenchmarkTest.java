@@ -12,16 +12,23 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 public class UdpClientBenchmarkTest {
     private static final Logger logger = LoggerFactory.getLogger(UdpClientBenchmarkTest.class);
-    private static int port = 60000;
-    private static int messageCount = 10000;
-    private static final int oneKilo = 1000;
-    private static final int delay = 20000;
+    private static final int N_1000K = 1000000;
+    private static final int N_100K = 100000;
+    private static final int N_10k = 10000;
+    private static final int delay1000k = 30000;
+    private static final int delay100k = 5000;
+    private static final int delay10k = 1000;
+    private static int port;
     private UdpBenchmarkServer server;
 
     @BeforeClass
-    public static void beforeClass() {
+    public static void beforeClass() throws IOException {
+        Runtime.getRuntime().exec("sysctl net.core.rmem_max");
+        Runtime.getRuntime().exec("sysctl net.core.rmem_default");
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
     }
 
@@ -38,23 +45,50 @@ public class UdpClientBenchmarkTest {
 
     @Test
     public void pipeline1000k() throws InterruptedException {
-        messageCount = 1000000;
-        udpPipelineClient();
+        udpPipelineClient(N_1000K, port, delay1000k);
     }
 
     @Test
     public void pipeline100k() throws InterruptedException {
-        messageCount = 100000;
-        udpPipelineClient();
+        udpPipelineClient(N_100K, port, delay100k);
     }
 
     @Test
     public void pipeline10k() throws InterruptedException {
-        messageCount = 10000;
-        udpPipelineClient();
+        udpPipelineClient(N_10k, port, delay10k);
     }
 
-    private void udpPipelineClient() throws InterruptedException {
+    @Test
+    public void udpclient1000k() throws InterruptedException {
+        udpNettyClient(N_1000K, port, delay1000k);
+    }
+
+    @Test
+    public void udpclient100k() throws InterruptedException {
+        udpNettyClient(N_100K, port, delay100k);
+    }
+
+    @Test
+    public void udpclient10k() throws InterruptedException {
+        udpNettyClient(N_10k, port, delay10k);
+    }
+
+    @Test
+    public void nonBlockingStatsDClient1000k() throws InterruptedException {
+        timGroupNonblockingStatsDClient(N_1000K, port, delay1000k);
+    }
+
+    @Test
+    public void nonBlockingStatsDClient100k() throws InterruptedException {
+        timGroupNonblockingStatsDClient(N_100K, port, delay100k);
+    }
+
+    @Test
+    public void nonBlockingStatsDClient10k() throws InterruptedException {
+        timGroupNonblockingStatsDClient(N_10k, port, delay10k);
+    }
+
+    private void udpPipelineClient(int messageCount, int port, int delay) throws InterruptedException {
         StatsDClient client = UdpStatsDClient.buildClientSupportPipeline("prefix", "localhost", port);
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
@@ -66,7 +100,7 @@ public class UdpClientBenchmarkTest {
     }
 
 
-    private void udpNettyClient() throws InterruptedException {
+    private void udpNettyClient(int messageCount, int port, int delay) throws InterruptedException {
         StatsDClient client = UdpStatsDClient.build("prefix", "localhost", port);
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
@@ -78,7 +112,7 @@ public class UdpClientBenchmarkTest {
     }
 
 
-    private void timGroupNonblockingStatsDClient() throws InterruptedException {
+    private void timGroupNonblockingStatsDClient(int messageCount, int port, int delay) throws InterruptedException {
         com.timgroup.statsd.StatsDClient client = new NonBlockingStatsDClient("prefix", "localhost", port,
                 new StatsDClientErrorHandler() {
                     @Override
