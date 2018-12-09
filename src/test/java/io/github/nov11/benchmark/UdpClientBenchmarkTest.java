@@ -5,21 +5,20 @@ import com.timgroup.statsd.StatsDClientErrorHandler;
 import io.github.nov11.StatsDClient;
 import io.github.nov11.UdpStatsDClient;
 import io.netty.util.ResourceLeakDetector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UdpClientBenchmarkTest {
     private static final Logger logger = LoggerFactory.getLogger(UdpClientBenchmarkTest.class);
     private static final int N_1000K = 1000000;
     private static final int N_100K = 100000;
     private static final int N_10k = 10000;
-    private static final int delay1000k = 30000;
+    private static final int delay1000k = 40000;
     private static final int delay100k = 5000;
     private static final int delay10k = 1000;
     private static int port;
@@ -90,10 +89,12 @@ public class UdpClientBenchmarkTest {
 
     private void udpPipelineClient(int messageCount, int port, int delay) throws InterruptedException {
         StatsDClient client = UdpStatsDClient.buildClientSupportPipeline("prefix", "localhost", port);
+        long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
         }
-        logger.info("called udpPipelineClient.count {} times. wait {} ms before gathering status", messageCount, delay);
+        long end = System.currentTimeMillis();
+        logger.info("called udpPipelineClient.count {} times, cost: {} ms. wait {} ms before gathering status", messageCount, end - start, delay);
         Thread.sleep(delay);
         server.printStats();
         client.shutdown();
@@ -102,10 +103,12 @@ public class UdpClientBenchmarkTest {
 
     private void udpNettyClient(int messageCount, int port, int delay) throws InterruptedException {
         StatsDClient client = UdpStatsDClient.build("prefix", "localhost", port);
+        long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
         }
-        logger.info("called udpNettyClient.count {} times. wait {} ms before gathering status", messageCount, delay);
+        long end = System.currentTimeMillis();
+        logger.info("called udpNettyClient.count {} times, cost: {} ms. wait {} ms before gathering status", messageCount, end - start, delay);
         Thread.sleep(delay);
         server.printStats();
         client.shutdown();
@@ -120,10 +123,12 @@ public class UdpClientBenchmarkTest {
                         logger.error("ex:", exception);
                     }
                 });
+        long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
         }
-        logger.info("called NonBlockingStatsDClient.count {} times. wait {} ms before gathering status", messageCount, delay);
+        long end = System.currentTimeMillis();
+        logger.info("called NonBlockingStatsDClient.count {} times, cost: {} ms. wait {} ms before gathering status", messageCount, end - start, delay);
         Thread.sleep(delay);
         server.printStats();
         client.stop();

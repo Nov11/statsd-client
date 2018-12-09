@@ -6,3 +6,4 @@ jdk:
 
 after_success:
 - mvn jacoco:report coveralls:report
+- script sysctl net.core.rmem_max && sysctl net.core.rmem_default
