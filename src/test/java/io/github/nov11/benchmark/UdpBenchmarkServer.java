@@ -30,7 +30,6 @@ public class UdpBenchmarkServer {
     private final static DecimalFormat decimalFormat = new DecimalFormat("0.#");
     private final EventLoopGroup worker = new NioEventLoopGroup(1);
     private final TestHandler handler;
-    private final static ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
 
     UdpBenchmarkServer(int port) throws InterruptedException {
@@ -57,7 +56,6 @@ public class UdpBenchmarkServer {
     }
 
     void shutdown() throws InterruptedException {
-        scheduledExecutorService.shutdownNow();
         worker.shutdownGracefully().sync();
     }
 
@@ -70,6 +68,7 @@ public class UdpBenchmarkServer {
         private long contentOfByte = 0;
         private final CountDownLatch countDownLatch;
         private AtomicInteger messageOfLastSecond = new AtomicInteger(0);
+        private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
         TestHandler(CountDownLatch countDownLatch) {
             this.countDownLatch = countDownLatch;
@@ -80,7 +79,7 @@ public class UdpBenchmarkServer {
             receivedPacket++;
             messageOfLastSecond.getAndAdd(1);
             if (firstReceived == 0) {
-                scheduledExecutorService.scheduleAtFixedRate(this::releaseIfIdleForOneSecond, 1, 1, TimeUnit.SECONDS);
+                scheduledExecutorService.schedule(this::releaseIfIdleForOneSecond, 1, TimeUnit.SECONDS);
                 firstReceived = System.currentTimeMillis();
             }
             ByteBuf byteBuf = msg.content();
@@ -99,7 +98,9 @@ public class UdpBenchmarkServer {
         void releaseIfIdleForOneSecond() {
             if (messageOfLastSecond.get() == 0) {
                 countDownLatch.countDown();
+                scheduledExecutorService.shutdownNow();
             } else {
+                scheduledExecutorService.schedule(this::releaseIfIdleForOneSecond, 1, TimeUnit.SECONDS);
                 messageOfLastSecond.set(0);
             }
         }
