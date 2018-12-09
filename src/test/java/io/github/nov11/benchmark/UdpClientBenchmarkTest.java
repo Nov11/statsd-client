@@ -1,6 +1,7 @@
 package io.github.nov11.benchmark;
 
 import com.timgroup.statsd.NonBlockingStatsDClient;
+import com.timgroup.statsd.StatsDClientErrorHandler;
 import io.github.nov11.StatsDClient;
 import io.github.nov11.UdpStatsDClient;
 import org.junit.After;
@@ -33,19 +34,37 @@ public class UdpClientBenchmarkTest {
             client.count("test-METRIC", 1);
         }
         logger.info("called client.count {} times", messageCount);
-        Thread.sleep(3000);
+        Thread.sleep(2000);
+        server.printStats();
+        client.shutdown();
+    }
+
+    @Test
+    public void udpNettyClient() throws InterruptedException {
+        StatsDClient client = UdpStatsDClient.build("prefix", "localhost", port);
+        for (int i = 0; i < messageCount; i++) {
+            client.count("test-METRIC", 1);
+        }
+        logger.info("called client.count {} times", messageCount);
+        Thread.sleep(2000);
         server.printStats();
         client.shutdown();
     }
 
     @Test
     public void timGroupNonblockingStatsDClient() throws InterruptedException {
-        com.timgroup.statsd.StatsDClient client = new NonBlockingStatsDClient("prefix", "localhost", port);
+        com.timgroup.statsd.StatsDClient client = new NonBlockingStatsDClient("prefix", "localhost", port,
+                new StatsDClientErrorHandler() {
+                    @Override
+                    public void handle(Exception exception) {
+                        logger.error("ex:", exception);
+                    }
+                });
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
         }
         logger.info("called client.count {} times", messageCount);
-        Thread.sleep(3000);
+        Thread.sleep(2000);
         server.printStats();
         client.stop();
     }

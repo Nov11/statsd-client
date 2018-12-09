@@ -55,6 +55,7 @@ public class UdpBenchmarkServer {
         private long valid = 0;
         private long firstReceived = 0;
         private long lastProcessed = 0;
+        private long contentOfByte = 0;
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
@@ -62,6 +63,7 @@ public class UdpBenchmarkServer {
                 firstReceived = System.currentTimeMillis();
             }
             ByteBuf byteBuf = msg.content();
+            contentOfByte += byteBuf.readableBytes();
             String s = byteBuf.toString(StandardCharsets.UTF_8);
             String[] metrics = s.split("\n");
             for (String item : metrics) {
@@ -83,9 +85,17 @@ public class UdpBenchmarkServer {
                     .append("\n");
             builder.append("packet received:\t").append(received).append("\n");
             builder.append("packet valid:\t\t").append(valid).append("\n");
+            double time = ((lastProcessed - firstReceived) * 1.0 / 1);
             builder.append("packet rate:\t\t")
-                    .append(decimalFormat.format((received * 1.0 / ((lastProcessed - firstReceived) * 1.0 / 1))))
-                    .append(" packets / million second");
+                    .append(decimalFormat.format((received * 1.0 / time)))
+                    .append(" packets / million second")
+                    .append("\n");
+            builder.append("data recevied:\t\t").append(contentOfByte).append(" bytes")
+                    .append("\n");
+            builder.append("data rate:\t\t\t")
+                    .append((1.0 * contentOfByte) / time)
+                    .append(" bytes / million second")
+                    .append("\n");
             return builder.toString();
         }
     }
