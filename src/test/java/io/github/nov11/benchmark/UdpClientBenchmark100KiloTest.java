@@ -4,18 +4,26 @@ import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClientErrorHandler;
 import io.github.nov11.StatsDClient;
 import io.github.nov11.UdpStatsDClient;
+import io.netty.util.ResourceLeakDetector;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UdpClientBenchmarkTest {
-    private static final Logger logger = LoggerFactory.getLogger(UdpClientBenchmarkTest.class);
+public class UdpClientBenchmark100KiloTest {
+    private static final Logger logger = LoggerFactory.getLogger(UdpClientBenchmark100KiloTest.class);
     private static final int port = 60000;
     private static final int messageCount = 1000000;
     private static final int oneKilo = 1000;
+    private static final int delay = 20000;
     private UdpBenchmarkServer server;
+
+    @BeforeClass
+    public static void beforeClass() {
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -33,8 +41,8 @@ public class UdpClientBenchmarkTest {
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
         }
-        logger.info("called client.count {} times", messageCount);
-        Thread.sleep(2000);
+        logger.info("called udpPipelineClient.count {} times. wait {} ms before gathering status", messageCount, delay);
+        Thread.sleep(delay);
         server.printStats();
         client.shutdown();
     }
@@ -45,8 +53,8 @@ public class UdpClientBenchmarkTest {
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
         }
-        logger.info("called client.count {} times", messageCount);
-        Thread.sleep(2000);
+        logger.info("called udpNettyClient.count {} times. wait {} ms before gathering status", messageCount, delay);
+        Thread.sleep(delay);
         server.printStats();
         client.shutdown();
     }
@@ -63,8 +71,8 @@ public class UdpClientBenchmarkTest {
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
         }
-        logger.info("called client.count {} times", messageCount);
-        Thread.sleep(2000);
+        logger.info("called NonBlockingStatsDClient.count {} times. wait {} ms before gathering status", messageCount, delay);
+        Thread.sleep(delay);
         server.printStats();
         client.stop();
     }
