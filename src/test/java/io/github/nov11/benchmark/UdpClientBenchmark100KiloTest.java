@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public class UdpClientBenchmark100KiloTest {
     private static final Logger logger = LoggerFactory.getLogger(UdpClientBenchmark100KiloTest.class);
     private static final int port = 60000;
-    private static final int messageCount = 1000000;
+    private static final int messageCount = 10000;
     private static final int oneKilo = 1000;
     private static final int delay = 20000;
     private UdpBenchmarkServer server;
