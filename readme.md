@@ -27,3 +27,12 @@ actually `w` option is ignored. so it should be `nc -kluv localhost port`.
              Connections which cannot be established or are idle timeout after timeout seconds.  The -w flag has no effect on the -l option, i.e. nc will listen forever for a connection, with or
              without the -w flag.  The default is no timeout.
 ```
+#### udp socket defaults & packet loss
+default values on Ubuntu 18.04.1 LTS:
+net.core.rmem_max = 212992
+net.core.rmem_default = 212992
+
+when running UdpClientBenchmarkTest sending 100000 messages, some packets are dropped.
+
+after changing above configs to 25MB(26214400), no packet is lost.
+ 
