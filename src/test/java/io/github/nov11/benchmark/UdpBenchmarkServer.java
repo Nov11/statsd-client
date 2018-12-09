@@ -18,6 +18,11 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UdpBenchmarkServer {
     private static final Logger logger = LoggerFactory.getLogger(UdpBenchmarkServer.class);
@@ -25,11 +30,12 @@ public class UdpBenchmarkServer {
     private final static DecimalFormat decimalFormat = new DecimalFormat("0.#");
     private final EventLoopGroup worker = new NioEventLoopGroup(1);
     private final TestHandler handler;
+    private final static ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private final CountDownLatch countDownLatch = new CountDownLatch(1);
 
-    public UdpBenchmarkServer(int port) throws InterruptedException {
-
+    UdpBenchmarkServer(int port) throws InterruptedException {
         Bootstrap bootstrap = new Bootstrap();
-        handler = new TestHandler();
+        handler = new TestHandler(countDownLatch);
 
         bootstrap.group(worker)
                 .channel(NioDatagramChannel.class)
@@ -42,16 +48,16 @@ public class UdpBenchmarkServer {
         bootstrap.bind(port).sync();
     }
 
-    public static void main(String[] args) {
-        DecimalFormat decimalFormat = new DecimalFormat("0.#");
-        System.out.println(decimalFormat.format(12.4567));
-    }
-
-    public void printStats() {
+    void printStats() {
         logger.info(handler.getStats());
     }
 
-    public void shutdown() throws InterruptedException {
+    void drainPackets() throws InterruptedException {
+        countDownLatch.await();
+    }
+
+    void shutdown() throws InterruptedException {
+        scheduledExecutorService.shutdownNow();
         worker.shutdownGracefully().sync();
     }
 
@@ -62,11 +68,19 @@ public class UdpBenchmarkServer {
         private long firstReceived = 0;
         private long lastProcessed = 0;
         private long contentOfByte = 0;
+        private final CountDownLatch countDownLatch;
+        private AtomicInteger messageOfLastSecond = new AtomicInteger(0);
+
+        TestHandler(CountDownLatch countDownLatch) {
+            this.countDownLatch = countDownLatch;
+        }
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
             receivedPacket++;
+            messageOfLastSecond.getAndAdd(1);
             if (firstReceived == 0) {
+                scheduledExecutorService.scheduleAtFixedRate(this::releaseIfIdleForOneSecond, 1, 1, TimeUnit.SECONDS);
                 firstReceived = System.currentTimeMillis();
             }
             ByteBuf byteBuf = msg.content();
@@ -80,6 +94,14 @@ public class UdpBenchmarkServer {
             }
             receivedMetric += metrics.length;
             lastProcessed = System.currentTimeMillis();
+        }
+
+        void releaseIfIdleForOneSecond() {
+            if (messageOfLastSecond.get() == 0) {
+                countDownLatch.countDown();
+            } else {
+                messageOfLastSecond.set(0);
+            }
         }
 
         String getStats() {
