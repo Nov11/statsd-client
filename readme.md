@@ -38,7 +38,152 @@ after changing above configs to 25MB(26214400), no packet is lost.
  
 #### performance
 
-given:
+travis(net.core.rmem_max = 212992, net.core.rmem_default = 212992):
+```
+Running io.github.nov11.benchmark.UdpClientBenchmarkTest
+[INFO  18:10:51.746 [thread:main] i.g.n.b.UdpClientBenchmarkTest:125] - called NonBlockingStatsDClient.count 1000000 times, cost: 7445 ms. blocking before gathering status 
+[INFO  18:10:54.322 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-09 18:10:44.319
+	[processed last packet]: 2018-12-09 18:10:51.838
+time consumption: 	7519 ms
+packet received:	14162
+packet rate:		1.9 packet / million second
+metric received:	14162
+metric valid:		14162
+metric rate:		1.9 metric / million second
+data received:		311564 bytes
+data rate:		41.4 byte / million second
+ 
+[INFO  18:10:57.376 [thread:main] i.g.n.b.UdpClientBenchmarkTest:125] - called NonBlockingStatsDClient.count 100000 times, cost: 946 ms. blocking before gathering status 
+[INFO  18:11:00.441 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-09 18:10:56.441
+	[processed last packet]: 2018-12-09 18:10:57.495
+time consumption: 	1054 ms
+packet received:	2271
+packet rate:		2.2 packet / million second
+metric received:	2271
+metric valid:		2271
+metric rate:		2.2 metric / million second
+data received:		49962 bytes
+data rate:		47.4 byte / million second
+ 
+[INFO  18:11:02.615 [thread:main] i.g.n.b.UdpClientBenchmarkTest:125] - called NonBlockingStatsDClient.count 10000 times, cost: 61 ms. blocking before gathering status 
+[INFO  18:11:06.569 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-09 18:11:02.574
+	[processed last packet]: 2018-12-09 18:11:02.697
+time consumption: 	123 ms
+packet received:	355
+packet rate:		2.9 packet / million second
+metric received:	355
+metric valid:		355
+metric rate:		2.9 metric / million second
+data received:		7810 bytes
+data rate:		63.5 byte / million second
+ 
+[INFO  18:11:14.971 [thread:main] i.g.n.b.UdpClientBenchmarkTest:96] - called udpPipelineClient.count 1000000 times, cost: 6286 ms. blocking before gathering status 
+[INFO  18:11:36.693 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-09 18:11:08.689
+	[processed last packet]: 2018-12-09 18:11:33.423
+time consumption: 	24734 ms
+packet received:	45455
+packet rate:		1.8 packet / million second
+metric received:	1000000
+metric valid:		1000000
+metric rate:		40.4 metric / million second
+data received:		22954545 bytes
+data rate:		928.1 byte / million second
+ 
+[INFO  18:11:41.361 [thread:main] i.g.n.b.UdpClientBenchmarkTest:96] - called udpPipelineClient.count 100000 times, cost: 452 ms. blocking before gathering status 
+[INFO  18:11:46.925 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-09 18:11:40.940
+	[processed last packet]: 2018-12-09 18:11:44.097
+time consumption: 	3157 ms
+packet received:	4546
+packet rate:		1.4 packet / million second
+metric received:	100000
+metric valid:		100000
+metric rate:		31.7 metric / million second
+data received:		2295454 bytes
+data rate:		727.1 byte / million second
+ 
+[INFO  18:11:51.205 [thread:main] i.g.n.b.UdpClientBenchmarkTest:96] - called udpPipelineClient.count 10000 times, cost: 58 ms. blocking before gathering status 
+[INFO  18:11:55.149 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-09 18:11:51.154
+	[processed last packet]: 2018-12-09 18:11:52.400
+time consumption: 	1246 ms
+packet received:	455
+packet rate:		0.4 packet / million second
+metric received:	10000
+metric valid:		10000
+metric rate:		8 metric / million second
+data received:		229545 bytes
+data rate:		184.2 byte / million second
+ 
+[INFO  18:12:03.006 [thread:main] i.g.n.b.UdpClientBenchmarkTest:110] - called udpNettyClient.count 1000000 times, cost: 3640 ms. blocking before gathering status 
+[INFO  18:16:47.665 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-09 18:11:59.387
+	[processed last packet]: 2018-12-09 18:16:44.522
+time consumption: 	285135 ms
+packet received:	999903
+packet rate:		3.5 packet / million second
+metric received:	999903
+metric valid:		999903
+metric rate:		3.5 metric / million second
+data received:		21997866 bytes
+data rate:		77.1 byte / million second
+ 
+[INFO  18:16:52.203 [thread:main] i.g.n.b.UdpClientBenchmarkTest:110] - called udpNettyClient.count 100000 times, cost: 322 ms. blocking before gathering status 
+[INFO  18:17:23.886 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-09 18:16:51.891
+	[processed last packet]: 2018-12-09 18:17:20.313
+time consumption: 	28422 ms
+packet received:	100000
+packet rate:		3.5 packet / million second
+metric received:	100000
+metric valid:		100000
+metric rate:		3.5 metric / million second
+data received:		2200000 bytes
+data rate:		77.4 byte / million second
+ 
+[INFO  18:17:28.129 [thread:main] i.g.n.b.UdpClientBenchmarkTest:110] - called udpNettyClient.count 10000 times, cost: 27 ms. blocking before gathering status 
+[INFO  18:17:34.105 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-09 18:17:28.111
+	[processed last packet]: 2018-12-09 18:17:31.127
+time consumption: 	3016 ms
+packet received:	10000
+packet rate:		3.3 packet / million second
+metric received:	10000
+metric valid:		10000
+metric rate:		3.3 metric / million second
+data received:		220000 bytes
+data rate:		72.9 byte / million second
+ 
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 414.057 sec
+Results :
+Tests run: 32, Failures: 0, Errors: 0, Skipped: 0
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 07:12 min
+[INFO] Finished at: 2018-12-09T18:17:38Z
+[INFO] Final Memory: 19M/254M
+[INFO] ------------------------------------------------------------------------
+The command "mvn test -B" exited with 0.
+
+```
+
+
+
+on my laptop given:
 net.core.rmem_max = 26214400
 net.core.rmem_default = 26214400
 
