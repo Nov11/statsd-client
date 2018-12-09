@@ -36,3 +36,35 @@ when running UdpClientBenchmarkTest sending 100000 messages, some packets are dr
 
 after changing above configs to 25MB(26214400), no packet is lost.
  
+#### performance
+
+given:
+net.core.rmem_max = 26214400
+net.core.rmem_default = 26214400
+
+udp with pipe line
+```
+[INFO  20:30:16.437 [thread:main] i.g.n.b.UdpClientBenchmarkTest:35] - called client.count 1000000 times 
+[INFO  20:30:19.443 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:50] - Stats:
+time:
+	[received first packet]: 2018-12-09 20:30:14.770
+	[processed last packet]: 2018-12-09 20:30:17.441
+time consumption: 2671 ms
+packet received:	1000000
+packet valid:		1000000
+packet rate:		374.4 packets / million second 
+```
+
+timgroup nonblocking stasd client
+
+```
+[INFO  20:32:15.637 [thread:main] i.g.n.b.UdpClientBenchmarkTest:47] - called client.count 1000000 times 
+[INFO  20:32:18.643 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:50] - Stats:
+time:
+	[received first packet]: 2018-12-09 20:32:13.995
+	[processed last packet]: 2018-12-09 20:32:16.362
+time consumption: 2367 ms
+packet received:	742491
+packet valid:		742491
+packet rate:		313.7 packets / million second 
+```
