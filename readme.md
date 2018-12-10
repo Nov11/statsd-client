@@ -372,3 +372,69 @@ packet received:	742491
 packet valid:		742491
 packet rate:		313.7 packets / million second 
 ```
+
+
+#### udp packet loss
+Start UdpBenchmarkServer on one machine. And run the three client on another machine within the same LAN with 10000 count request.
+- Receive buffer on server is set to 25MB.
+- Scheduler task in 20 sec instead of 2 to guarantee that server drained incoming packets.
+- On server side machine, reported packet counts do not deviate from that of wireshark.
+
+- nonblocking statsD client:
+```
+[INFO  22:10:49.113 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-10 22:10:29.101
+	[processed last packet]: 2018-12-10 22:10:29.296
+time consumption: 	195 ms
+packet received:	1551
+packet rate:		8 packet / million second
+metric received:	1551
+metric valid:		1551
+metric rate:		8 metric / million second
+data received:		34122 bytes
+data rate:		175 byte / million second
+
+
+Process finished with exit code 0
+
+```
+
+- udp netty client
+```
+[INFO  22:13:55.767 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-10 22:13:35.755
+	[processed last packet]: 2018-12-10 22:13:35.838
+time consumption: 	83 ms
+packet received:	1549
+packet rate:		18.7 packet / million second
+metric received:	1549
+metric valid:		1549
+metric rate:		18.7 metric / million second
+data received:		34078 bytes
+data rate:		410.6 byte / million second
+
+
+Process finished with exit code 0
+```
+
+- udp pipeline client
+
+```
+[INFO  22:16:02.144 [thread:main] i.g.n.benchmark.UdpBenchmarkServer:51] - Stats record in server:
+time:
+	[received first packet]: 2018-12-10 22:15:42.132
+	[processed last packet]: 2018-12-10 22:15:42.841
+time consumption: 	709 ms
+packet received:	449
+packet rate:		0.6 packet / million second
+metric received:	9868
+metric valid:		9868
+metric rate:		13.9 metric / million second
+data received:		226515 bytes
+data rate:		319.5 byte / million second
+
+
+Process finished with exit code 0
+```
