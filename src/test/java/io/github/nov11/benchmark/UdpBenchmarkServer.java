@@ -134,4 +134,9 @@ public class UdpBenchmarkServer {
             return builder.toString();
         }
     }
+
+    public static void main(String[] args) throws InterruptedException {
+        UdpBenchmarkServer server = new UdpBenchmarkServer(60000);
+
+    }
 }

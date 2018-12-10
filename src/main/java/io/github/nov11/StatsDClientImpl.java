@@ -1,6 +1,5 @@
 package io.github.nov11;
 
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public class StatsDClientImpl implements StatsDClient {
