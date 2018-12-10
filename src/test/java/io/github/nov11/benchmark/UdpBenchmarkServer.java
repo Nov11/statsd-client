@@ -137,6 +137,8 @@ public class UdpBenchmarkServer {
 
     public static void main(String[] args) throws InterruptedException {
         UdpBenchmarkServer server = new UdpBenchmarkServer(60000);
-
+        server.drainPackets();
+        server.printStats();
+        server.shutdown();
     }
 }
