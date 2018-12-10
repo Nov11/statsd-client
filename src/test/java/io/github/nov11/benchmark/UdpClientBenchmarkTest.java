@@ -43,51 +43,51 @@ public class UdpClientBenchmarkTest {
 
     @Test
     public void pipeline1000k() throws InterruptedException {
-        udpPipelineClient(N_1000K, port);
+        udpPipelineClient("localhost", N_1000K, port);
     }
 
     @Test
     public void pipeline100k() throws InterruptedException {
-        udpPipelineClient(N_100K, port);
+        udpPipelineClient("localhost", N_100K, port);
     }
 
     @Test
     public void pipeline10k() throws InterruptedException {
-        udpPipelineClient(N_10k, port);
+        udpPipelineClient("localhost", N_10k, port);
     }
 
     @Test
     public void udpclient1000k() throws InterruptedException {
-        udpNettyClient(N_1000K, port);
+        udpNettyClient("localhost", N_1000K, port);
     }
 
     @Test
     public void udpclient100k() throws InterruptedException {
-        udpNettyClient(N_100K, port);
+        udpNettyClient("localhost", N_100K, port);
     }
 
     @Test
     public void udpclient10k() throws InterruptedException {
-        udpNettyClient(N_10k, port);
+        udpNettyClient("localhost", N_10k, port);
     }
 
     @Test
     public void nonBlockingStatsDClient1000k() throws InterruptedException {
-        timGroupNonblockingStatsDClient(N_1000K, port);
+        timGroupNonblockingStatsDClient("localhost", N_1000K, port);
     }
 
     @Test
     public void nonBlockingStatsDClient100k() throws InterruptedException {
-        timGroupNonblockingStatsDClient(N_100K, port);
+        timGroupNonblockingStatsDClient("localhost", N_100K, port);
     }
 
     @Test
     public void nonBlockingStatsDClient10k() throws InterruptedException {
-        timGroupNonblockingStatsDClient(N_10k, port);
+        timGroupNonblockingStatsDClient("localhost", N_10k, port);
     }
 
-    private void udpPipelineClient(int messageCount, int port) throws InterruptedException {
-        StatsDClient client = UdpStatsDClient.buildClientSupportPipeline("prefix", "localhost", port);
+    private void udpPipelineClient(String host, int messageCount, int port) throws InterruptedException {
+        StatsDClient client = UdpStatsDClient.buildClientSupportPipeline("prefix", host, port);
         long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
@@ -99,9 +99,8 @@ public class UdpClientBenchmarkTest {
         client.shutdown();
     }
 
-
-    private void udpNettyClient(int messageCount, int port) throws InterruptedException {
-        StatsDClient client = UdpStatsDClient.build("prefix", "localhost", port);
+    private void udpNettyClient(String host, int messageCount, int port) throws InterruptedException {
+        StatsDClient client = UdpStatsDClient.build("prefix", host, port);
         long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
@@ -114,8 +113,8 @@ public class UdpClientBenchmarkTest {
     }
 
 
-    private void timGroupNonblockingStatsDClient(int messageCount, int port) throws InterruptedException {
-        com.timgroup.statsd.StatsDClient client = new NonBlockingStatsDClient("prefix", "localhost", port,
+    private void timGroupNonblockingStatsDClient(String host, int messageCount, int port) throws InterruptedException {
+        com.timgroup.statsd.StatsDClient client = new NonBlockingStatsDClient("prefix", host, port,
                 exception -> logger.error("ex:", exception));
         long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
