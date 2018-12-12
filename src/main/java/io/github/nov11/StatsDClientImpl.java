@@ -19,8 +19,7 @@ public class StatsDClientImpl implements StatsDClient {
 
     @Override
     public void count(String metric, long value) {
-        String FORMAT_COUNT = "%s:%d|c";
-        sender.send(buildMessage(FORMAT_COUNT, metric, value));
+        sender.send(buildMessage(metric, value, 'c'));
     }
 
     @Override
@@ -30,8 +29,7 @@ public class StatsDClientImpl implements StatsDClient {
 
     @Override
     public void set(String metric, long value) {
-        String FORMAT_SET = "%s:%d|s";
-        sender.send(buildMessage(FORMAT_SET, metric, value));
+        sender.send(buildMessage(metric, value, 's'));
     }
 
     //example:
@@ -45,41 +43,68 @@ public class StatsDClientImpl implements StatsDClient {
 
     @Override
     public void gauge(String metric, long value, boolean delta) {
-        StringBuilder builder = new StringBuilder();
-        if (!delta && value < 0) {
-            builder.append(buildMessage("%s:%d|g", metric, 0)).append('\n');
-            builder.append(buildMessage("%s:%d|g", metric, value));
+        if (!delta) {
+            StringBuilder builder = new StringBuilder();
+            if (value < 0) {
+                builder.append(buildMessage(metric, 0, 'g')).append('\n');
+            }
+            builder.append(buildMessage(metric, value, 'g'));
             sender.send(builder.toString());
             return;
         }
-        String FORMAT_GAUGE = delta ? "%s:+%d|g" : "%s:%d|g";
-        builder.append(buildMessage(FORMAT_GAUGE, metric, value));
-        sender.send(builder.toString());
+        sender.send(buildGaugeDeltaMessage(metric, value));
     }
 
     //gorets:1|c|@0.1
     @Override
     public void sampling(String metric, long value, double delta) {
-        String FORMAT_SAMPLING = "%s:%d|c|@%s";
-        sender.send(buildSamplingMessage(FORMAT_SAMPLING, metric, value, delta));
+        String msg = buildSamplingMessage(metric, value, "c", delta);
+        sender.send(msg);
     }
 
     //glork:320|ms|@0.1
     @Override
     public void time(String metric, long time, double rate) {
-        String FORMAT_TIME = "%s:%d|ms|@%s";
-        sender.send(buildSamplingMessage(FORMAT_TIME, metric, time, rate));
+        String msg = buildSamplingMessage(metric, time, "ms", rate);
+        sender.send(msg);
     }
 
-    private String buildMessage(String format, String metric, long value) {
-        return String.format(format, prefix + metric, value);
+    private String buildMessage(String metric, long value, char type) {
+        StringBuilder builder = new StringBuilder(prefix);
+        builder.append(metric);
+        builder.append(':');
+        builder.append(value);
+        builder.append('|');
+        builder.append(type);
+        return builder.toString();
     }
 
-    private String buildSamplingMessage(String format, String metric, long value, double sampleRate) {
+    private String buildGaugeDeltaMessage(String metric, long value) {
+        StringBuilder builder = new StringBuilder(prefix);
+        builder.append(metric);
+        builder.append(':');
+        builder.append(value > 0 ? '+' : '-');
+        builder.append(value);
+        builder.append("|g");
+        return builder.toString();
+    }
+
+    private String buildSamplingMessage(String metric, long value, String type, double sampleRate) {
         DecimalFormat decimalFormat = new DecimalFormat("0.#");
         decimalFormat.setGroupingUsed(false);
         decimalFormat.setMaximumFractionDigits(15);
-        return String.format(format, prefix + metric, value, decimalFormat.format(sampleRate));
+        String rate = decimalFormat.format(sampleRate);
+
+        StringBuilder builder = new StringBuilder(prefix);
+        builder.append(metric);
+        builder.append(':');
+        builder.append(value);
+        builder.append('|');
+        builder.append(type);
+        builder.append("|@");
+        builder.append(rate);
+
+        return builder.toString();
     }
 
     @Override

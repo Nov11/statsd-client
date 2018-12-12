@@ -99,7 +99,7 @@ public class UdpPipelineClientTest {
         Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
-        Assert.assertEquals("prefix.test-METRIC:-10|g", recv);
+        Assert.assertEquals("prefix.test-METRIC:0|g\nprefix.test-METRIC:-10|g", recv);
     }
 
     @Test

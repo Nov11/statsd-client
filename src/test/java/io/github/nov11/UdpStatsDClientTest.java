@@ -81,7 +81,7 @@ public class UdpStatsDClientTest {
     public void gaugeNegative() throws InterruptedException {
         client.gauge(METRIC, -10, false);
         String recv = blockingDeque.take();
-        Assert.assertEquals("prefix.test-METRIC:-10|g", recv);
+        Assert.assertEquals("prefix.test-METRIC:0|g\nprefix.test-METRIC:-10|g", recv);
     }
 
     @Test
