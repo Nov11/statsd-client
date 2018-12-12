@@ -21,7 +21,7 @@ public class UdpPipelineFacadeClientTest {
     public static void beforeClass() throws Exception {
         int port = getRandomPort();
         logger.info("PORT: {}", port);
-        client = UdpStatsDClient.buildTimGroupStasDClient("prefix", "localhost", port);
+        client = UdpStatsDClient.buildTimGroupStatsDClient("prefix", "localhost", port);
         server = new DumbUdpServer(port);
         blockingDeque = server.getMessage();
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);

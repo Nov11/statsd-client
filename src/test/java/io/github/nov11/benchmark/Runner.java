@@ -16,7 +16,7 @@ public class Runner {
 //                exception -> logger.error("ex:", exception));
 
 
-        StatsDClient client = UdpStatsDClient.buildClientSupportPipeline("prefix", host, port);
+        StatsDClient client = UdpStatsDClient.buildPipelineClient("prefix", host, port);
         long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);

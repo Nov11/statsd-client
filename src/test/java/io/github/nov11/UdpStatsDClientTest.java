@@ -17,7 +17,7 @@ public class UdpStatsDClientTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         int port = getRandomPort();
-        client = UdpStatsDClient.build("prefix", "localhost", port);
+        client = UdpStatsDClient.buildNormalClient("prefix", "localhost", port);
         server = new DumbUdpServer(port);
         blockingDeque = server.getMessage();
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);

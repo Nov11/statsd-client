@@ -102,7 +102,7 @@ public class UdpClientBenchmarkTest {
     }
 
     private void udpPipelineClient(String host, int messageCount, int port) throws InterruptedException {
-        StatsDClient client = UdpStatsDClient.buildClientSupportPipeline("prefix", host, port);
+        StatsDClient client = UdpStatsDClient.buildPipelineClient("prefix", host, port);
         long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
@@ -115,7 +115,7 @@ public class UdpClientBenchmarkTest {
     }
 
     private void udpNettyClient(String host, int messageCount, int port) throws InterruptedException {
-        StatsDClient client = UdpStatsDClient.build("prefix", host, port);
+        StatsDClient client = UdpStatsDClient.buildNormalClient("prefix", host, port);
         long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
@@ -143,13 +143,13 @@ public class UdpClientBenchmarkTest {
     }
 
     private void pipelineClientWithFacadeInterface(String host, int messageCount, int port) throws InterruptedException {
-        com.timgroup.statsd.StatsDClient client = UdpStatsDClient.buildTimGroupStasDClient("prefix", host, port);
+        com.timgroup.statsd.StatsDClient client = UdpStatsDClient.buildTimGroupStatsDClient("prefix", host, port);
         long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
         }
         long end = System.currentTimeMillis();
-        logger.info("called NonBlockingStatsDClient.count {} times, cost: {} ms. blocking before gathering status", messageCount, end - start);
+        logger.info("called buildTimGroupStatsDClient.count {} times, cost: {} ms. blocking before gathering status", messageCount, end - start);
         server.drainPackets();
         server.printStats();
         client.stop();
