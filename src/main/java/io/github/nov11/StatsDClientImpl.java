@@ -45,8 +45,16 @@ public class StatsDClientImpl implements StatsDClient {
 
     @Override
     public void gauge(String metric, long value, boolean delta) {
+        StringBuilder builder = new StringBuilder();
+        if (!delta && value < 0) {
+            builder.append(buildMessage("%s:%d|g", metric, 0)).append('\n');
+            builder.append(buildMessage("%s:%d|g", metric, value));
+            sender.send(builder.toString());
+            return;
+        }
         String FORMAT_GAUGE = delta ? "%s:+%d|g" : "%s:%d|g";
-        sender.send(buildMessage(FORMAT_GAUGE, metric, value));
+        builder.append(buildMessage(FORMAT_GAUGE, metric, value));
+        sender.send(builder.toString());
     }
 
     //gorets:1|c|@0.1
