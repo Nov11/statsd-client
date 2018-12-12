@@ -86,6 +86,21 @@ public class UdpClientBenchmarkTest {
         timGroupNonblockingStatsDClient("localhost", N_10k, port);
     }
 
+    @Test
+    public void pipelineClientWithFacadeInterface1000k() throws InterruptedException {
+        pipelineClientWithFacadeInterface("localhost", N_1000K, port);
+    }
+
+    @Test
+    public void pipelineClientWithFacadeInterface100k() throws InterruptedException {
+        pipelineClientWithFacadeInterface("localhost", N_100K, port);
+    }
+
+    @Test
+    public void pipelineClientWithFacadeInterface10k() throws InterruptedException {
+        pipelineClientWithFacadeInterface("localhost", N_10k, port);
+    }
+
     private void udpPipelineClient(String host, int messageCount, int port) throws InterruptedException {
         StatsDClient client = UdpStatsDClient.buildClientSupportPipeline("prefix", host, port);
         long start = System.currentTimeMillis();
@@ -116,6 +131,19 @@ public class UdpClientBenchmarkTest {
     private void timGroupNonblockingStatsDClient(String host, int messageCount, int port) throws InterruptedException {
         com.timgroup.statsd.StatsDClient client = new NonBlockingStatsDClient("prefix", host, port,
                 exception -> logger.error("ex:", exception));
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < messageCount; i++) {
+            client.count("test-METRIC", 1);
+        }
+        long end = System.currentTimeMillis();
+        logger.info("called NonBlockingStatsDClient.count {} times, cost: {} ms. blocking before gathering status", messageCount, end - start);
+        server.drainPackets();
+        server.printStats();
+        client.stop();
+    }
+
+    private void pipelineClientWithFacadeInterface(String host, int messageCount, int port) throws InterruptedException {
+        com.timgroup.statsd.StatsDClient client = UdpStatsDClient.buildTimGroupStasDClient("prefix", host, port);
         long start = System.currentTimeMillis();
         for (int i = 0; i < messageCount; i++) {
             client.count("test-METRIC", 1);
