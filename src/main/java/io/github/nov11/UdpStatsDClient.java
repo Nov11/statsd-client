@@ -11,4 +11,8 @@ public interface UdpStatsDClient {
     static StatsDClient buildClientSupportPipeline(String prefix, String host, int port) {
         return new StatsDClientImpl(prefix, new UdpPipelineClient(host, port));
     }
+
+    static com.timgroup.statsd.StatsDClient buildTimGroupStasDClient(String prefix, String host, int port) {
+        return new TimGroupStatsDClient(prefix, new UdpPipelineClient(host, port));
+    }
 }
