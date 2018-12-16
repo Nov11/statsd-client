@@ -14,6 +14,7 @@
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>a statsD client built on netty</description>
+    <url>http://github.com/Nov11</url>
     <scm>
         <connection>scm:git:git://github.com/Nov11/statsd-client.git</connection>
         <developerConnection>scm:git:ssh://github.com/Nov11/statsd-client.git</developerConnection>
