@@ -2,6 +2,24 @@
 [![Build Status](https://travis-ci.org/Nov11/statsd-client.svg?branch=master)](https://travis-ci.org/Nov11/statsd-client)
 [![Coverage Status](https://coveralls.io/repos/github/Nov11/statsd-client/badge.svg?branch=master)](https://coveralls.io/github/Nov11/statsd-client?branch=master)
 
+#### features
+* Supports Udp connection only
+* Automatically buffers & builds largest packet as possible to lower packet loss rate
+* Compatible with Timgroup's StatsD client interface 
+
+##### pick one client:
+- buildNormalClient: udp client on top of Netty which send individual metric in one packet
+- buildPipelineClient: udp client combines adjacent packets and send them together. buffer flushes itself if not more packets arrived in 1 second.
+
+##### maven dependency:
+```
+<dependency>
+    <groupId>io.github.nov11</groupId>
+    <artifactId>statsd-client</artifactId>
+    <version>1.0.0</version>
+</dependency>
+
+```
 
 #### test by using nc to establish a localhost udp server
 
