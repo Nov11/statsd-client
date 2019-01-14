@@ -121,13 +121,11 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Make this jar executable -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <!-- exclude logback.xml -->
                     <excludes>
                         <exclude>**/logback.xml</exclude>
                     </excludes>
@@ -191,7 +189,11 @@
             <artifactId>netty-all</artifactId>
             <version>4.1.12.Final</version>
         </dependency>
-        <!-- todo:remove this from packaged jar -->
+        <dependency>
+            <groupId>com.timgroup</groupId>
+            <artifactId>java-statsd-client</artifactId>
+            <version>3.1.0</version>
+        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -208,11 +210,6 @@
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.timgroup</groupId>
-            <artifactId>java-statsd-client</artifactId>
-            <version>3.1.0</version>
         </dependency>
     </dependencies>
 
