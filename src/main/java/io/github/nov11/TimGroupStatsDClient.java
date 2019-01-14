@@ -10,7 +10,7 @@ public class TimGroupStatsDClient extends ConvenienceMethodProvidingStatsDClient
     private final String prefix;
     private final MetricSender sender;
 
-    TimGroupStatsDClient(String prefix, MetricSender sender) {
+    public TimGroupStatsDClient(String prefix, MetricSender sender) {
         if (prefix == null || prefix.equals("")) {
             this.prefix = "";
         } else {
