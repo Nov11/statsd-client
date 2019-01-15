@@ -16,7 +16,7 @@
 <dependency>
     <groupId>io.github.nov11</groupId>
     <artifactId>statsd-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
 </dependency>
 
 ```
@@ -456,3 +456,6 @@ data rate:		319.5 byte / million second
 
 Process finished with exit code 0
 ```
+
+#### todo:
+discard packets if the event loop is overwhelmed.
