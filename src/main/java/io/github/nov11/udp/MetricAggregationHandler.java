@@ -69,4 +69,17 @@ public class MetricAggregationHandler extends ChannelDuplexHandler {
     int remainMsgLength() {
         return builder.length();
     }
+
+    /**
+     * log exception and swallow it
+     * not closing the underlying channel
+     *
+     * @param ctx
+     * @param cause
+     * @throws Exception
+     */
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        logger.error("metricAggregator ex:{}", cause.getMessage());
+    }
 }
