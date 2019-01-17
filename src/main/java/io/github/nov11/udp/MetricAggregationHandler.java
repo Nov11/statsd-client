@@ -73,6 +73,8 @@ public class MetricAggregationHandler extends ChannelDuplexHandler {
     /**
      * log exception and swallow it
      * not closing the underlying channel
+     * when remote server comes up, it will receive datagram sent later
+     * datagram are lost during when server restarts which is acceptable
      *
      * @param ctx
      * @param cause
@@ -80,6 +82,6 @@ public class MetricAggregationHandler extends ChannelDuplexHandler {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error("metricAggregator ex:{}", cause.getMessage());
+        logger.error("metricAggregator ex:", cause);
     }
 }
