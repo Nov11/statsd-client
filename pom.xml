@@ -10,6 +10,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <build.plugins.plugin.version>2.8.2</build.plugins.plugin.version>
     </properties>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -164,11 +165,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-deploy-plugin</artifactId>-->
-                <!--<version>2.8.2</version>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
