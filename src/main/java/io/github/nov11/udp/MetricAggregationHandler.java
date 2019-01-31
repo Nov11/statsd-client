@@ -29,7 +29,6 @@ public class MetricAggregationHandler extends ChannelDuplexHandler {
         if (msg.length() >= PACKET_SIZE) {
             writeBufferedData(ctx);
             ctx.writeAndFlush(msg);
-            logger.debug("{}", msg);
 
             return;
         }
@@ -51,7 +50,6 @@ public class MetricAggregationHandler extends ChannelDuplexHandler {
     private void writeBufferedData(ChannelHandlerContext ctx) {
         if (builder.length() > 0) {
             ctx.writeAndFlush(builder.toString());
-            logger.debug("{}", builder.toString());
             builder.setLength(0);
         }
     }
