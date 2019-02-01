@@ -46,10 +46,10 @@ public class PacketLossTest {
             public void run(Timeout timeout) throws Exception {
                 logger.info("task start");
                 for (int i = 0; i < count; i++) {
-                    statsDClient.increment("test1");
-                    statsDClient.increment("test2");
-                    nonBlockingStatsDClient.increment("test3");
-                    nonBlockingStatsDClient.increment("test4");
+                    statsDClient.increment("test1_aggregate");
+                    statsDClient.increment("test2_aggregate");
+                    nonBlockingStatsDClient.increment("test3_single");
+                    nonBlockingStatsDClient.increment("test4_single");
                 }
 //                for (int i = 0; i < 10000; i++) {
 //                }
