@@ -16,7 +16,7 @@ public class PacketLossTest {
 
     //test  直接copy的
     private static String makePrefix() {
-        String name = "magic";
+        String name = "mac";
         logger.info("metric prefix:{}", name);
         return name;
     }
