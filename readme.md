@@ -461,3 +461,4 @@ Process finished with exit code 0
 1.discard packets if the event loop is overwhelmed.
 2.add statistics to provide performance insight.
 3.optional client side load balancing.
+4.sampling according to rate specified in client construction.
