@@ -16,7 +16,7 @@
 <dependency>
     <groupId>io.github.nov11</groupId>
     <artifactId>statsd-client</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 </dependency>
 
 ```
