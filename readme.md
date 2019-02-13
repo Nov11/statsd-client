@@ -8,9 +8,9 @@
 * Compatible with Timgroup's StatsD client interface 
 
 ##### pick one client:
-- buildNormalClient: udp client on top of Netty which send individual metric in one packet
+- buildNormalClient: udp client on top of Netty which send individual metric in one packet.
 - buildPipelineClient: udp client combines adjacent packets and send them together. buffer flushes itself if not more packets arrived in 1 second.
-
+- buildSimpleRandomSamplingStatsDClient: automatically convert counting metrics into sampling metrics to reduce udp packets sent.
 ##### maven dependency:
 ```
 <dependency>
