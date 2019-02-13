@@ -41,7 +41,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void count() throws InterruptedException {
         client.count(METRIC, VALUE);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|c", recv);
@@ -50,7 +49,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void increment() throws InterruptedException {
         client.increment(METRIC);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:1|c", recv);
@@ -59,7 +57,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void incrementCounter() throws InterruptedException {
         client.incrementCounter(METRIC);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:1|c", recv);
@@ -68,7 +65,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void decrement() throws InterruptedException {
         client.decrement(METRIC);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:-1|c", recv);
@@ -77,7 +73,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void decrementCounter() throws InterruptedException {
         client.decrementCounter(METRIC);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:-1|c", recv);
@@ -86,7 +81,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void set() throws InterruptedException {
         client.set(METRIC, String.valueOf(VALUE));
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|s", recv);
@@ -95,7 +89,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void recordSetEvent() throws InterruptedException {
         client.recordSetEvent(METRIC, String.valueOf(VALUE));
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|s", recv);
@@ -105,7 +98,6 @@ public class UdpPipelineFacadeClientTest {
     public void gaugePositive() throws InterruptedException {
         String metric = "test-METRIC";
         client.recordGaugeValue(metric, 10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|g", recv);
@@ -115,7 +107,6 @@ public class UdpPipelineFacadeClientTest {
     public void gaugeNegative() throws InterruptedException {
         String metric = "test-METRIC";
         client.recordGaugeValue(metric, -10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:0|g\nprefix.test-METRIC:-10|g", recv);
@@ -125,7 +116,6 @@ public class UdpPipelineFacadeClientTest {
     public void gaugeLong() throws InterruptedException {
         String metric = "test-METRIC";
         client.recordGaugeValue(metric, 10L);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|g", recv);
@@ -135,7 +125,6 @@ public class UdpPipelineFacadeClientTest {
     public void gaugeDouble() throws InterruptedException {
         String metric = "test-METRIC";
         client.recordGaugeValue(metric, 1.1);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:1.1|g", recv);
@@ -144,7 +133,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void gaugeDeltaNegative() throws InterruptedException {
         client.recordGaugeDelta(METRIC, -10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:-10|g", recv);
@@ -153,7 +141,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void gaugeDeltaPositive() throws InterruptedException {
         client.recordGaugeDelta(METRIC, 10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:+10|g", recv);
@@ -162,7 +149,6 @@ public class UdpPipelineFacadeClientTest {
     @Test
     public void sampling() throws InterruptedException {
         client.count(METRIC, 20, 1.2);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:20|c|@1.2", recv);

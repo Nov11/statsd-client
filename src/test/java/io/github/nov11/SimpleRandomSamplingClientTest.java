@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 import static io.github.nov11.Util.getRandomPort;
 
@@ -34,64 +35,76 @@ public class SimpleRandomSamplingClientTest {
     }
 
     @After
-    public void after() {
-        Assert.assertTrue(blockingDeque.isEmpty());
+    public void after() throws InterruptedException {
+        Thread.sleep(1000);
+        blockingDeque.clear();
     }
 
     @Test
     public void count() throws InterruptedException {
-        client.count(METRIC, VALUE);
-        client.count(METRIC, VALUE);
-        Thread.sleep(500);
-        Assert.assertNull(blockingDeque.poll());
-        String recv = blockingDeque.take();
-        Assert.assertEquals("prefix.test-METRIC:10|c|@0.5", recv);
+        for (int i = 0; i < 1000; i++) {
+            client.count(METRIC, VALUE);
+        }
+        resultChecker("prefix.test-METRIC:10|c|@0.5");
+    }
+
+    private void resultChecker(String expectedMetric) throws InterruptedException {
+        resultChecker(expectedMetric, 450);
+    }
+
+    private void resultChecker(String expectedMetric, int expectedCount) throws InterruptedException {
+        int count = 0;
+        String value = "";
+        while (true) {
+            String recv = blockingDeque.poll(100, TimeUnit.MILLISECONDS);
+            if (recv == null) {
+                break;
+            }
+            String[] ret = recv.split("\n");
+            count += ret.length;
+            if (ret.length > 0) {
+                value = ret[0];
+            }
+        }
+        Assert.assertEquals(expectedMetric, value);
+        Assert.assertTrue(count > expectedCount);
     }
 
     @Test
     public void increment() throws InterruptedException {
-        client.increment(METRIC);
-        client.increment(METRIC);
-        Thread.sleep(500);
-        Assert.assertNull(blockingDeque.poll());
-        String recv = blockingDeque.take();
-        Assert.assertEquals("prefix.test-METRIC:1|c|@0.5", recv);
+        for (int i = 0; i < 1000; i++) {
+            client.increment(METRIC);
+        }
+        resultChecker("prefix.test-METRIC:1|c|@0.5");
     }
 
     @Test
     public void incrementCounter() throws InterruptedException {
-        client.incrementCounter(METRIC);
-        client.incrementCounter(METRIC);
-        Thread.sleep(500);
-        Assert.assertNull(blockingDeque.poll());
-        String recv = blockingDeque.take();
-        Assert.assertEquals("prefix.test-METRIC:1|c|@0.5", recv);
+        for (int i = 0; i < 1000; i++) {
+            client.incrementCounter(METRIC);
+        }
+        resultChecker("prefix.test-METRIC:1|c|@0.5");
     }
 
     @Test
     public void decrement() throws InterruptedException {
-        client.decrement(METRIC);
-        client.decrement(METRIC);
-        Thread.sleep(500);
-        Assert.assertNull(blockingDeque.poll());
-        String recv = blockingDeque.take();
-        Assert.assertEquals("prefix.test-METRIC:-1|c|@0.5", recv);
+        for (int i = 0; i < 1000; i++) {
+            client.decrement(METRIC);
+        }
+        resultChecker("prefix.test-METRIC:-1|c|@0.5");
     }
 
     @Test
     public void decrementCounter() throws InterruptedException {
-        client.decrementCounter(METRIC);
-        client.decrementCounter(METRIC);
-        Thread.sleep(500);
-        Assert.assertNull(blockingDeque.poll());
-        String recv = blockingDeque.take();
-        Assert.assertEquals("prefix.test-METRIC:-1|c|@0.5", recv);
+        for (int i = 0; i < 1000; i++) {
+            client.decrement(METRIC);
+        }
+        resultChecker("prefix.test-METRIC:-1|c|@0.5");
     }
 
     @Test
     public void set() throws InterruptedException {
         client.set(METRIC, String.valueOf(VALUE));
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|s", recv);
@@ -100,7 +113,6 @@ public class SimpleRandomSamplingClientTest {
     @Test
     public void recordSetEvent() throws InterruptedException {
         client.recordSetEvent(METRIC, String.valueOf(VALUE));
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|s", recv);
@@ -110,7 +122,6 @@ public class SimpleRandomSamplingClientTest {
     public void gaugePositive() throws InterruptedException {
         String metric = "test-METRIC";
         client.recordGaugeValue(metric, 10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|g", recv);
@@ -120,7 +131,6 @@ public class SimpleRandomSamplingClientTest {
     public void gaugeNegative() throws InterruptedException {
         String metric = "test-METRIC";
         client.recordGaugeValue(metric, -10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:0|g\nprefix.test-METRIC:-10|g", recv);
@@ -130,7 +140,6 @@ public class SimpleRandomSamplingClientTest {
     public void gaugeLong() throws InterruptedException {
         String metric = "test-METRIC";
         client.recordGaugeValue(metric, 10L);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|g", recv);
@@ -140,7 +149,6 @@ public class SimpleRandomSamplingClientTest {
     public void gaugeDouble() throws InterruptedException {
         String metric = "test-METRIC";
         client.recordGaugeValue(metric, 1.1);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:1.1|g", recv);
@@ -149,7 +157,6 @@ public class SimpleRandomSamplingClientTest {
     @Test
     public void gaugeDeltaNegative() throws InterruptedException {
         client.recordGaugeDelta(METRIC, -10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:-10|g", recv);
@@ -158,7 +165,6 @@ public class SimpleRandomSamplingClientTest {
     @Test
     public void gaugeDeltaPositive() throws InterruptedException {
         client.recordGaugeDelta(METRIC, 10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:+10|g", recv);
@@ -166,17 +172,15 @@ public class SimpleRandomSamplingClientTest {
 
     @Test
     public void sampling() throws InterruptedException {
-        client.count(METRIC, 20, 1.2);
-        Thread.sleep(500);
-        Assert.assertNull(blockingDeque.poll());
-        String recv = blockingDeque.take();
-        Assert.assertEquals("prefix.test-METRIC:20|c|@1.2", recv);
+        for (int i = 0; i < 1000; i++) {
+            client.count(METRIC, 20, 1.2);
+        }
+        resultChecker("prefix.test-METRIC:20|c|@0.5", 450);
     }
 
     @Test
     public void time() throws InterruptedException {
         client.time(METRIC, 10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|ms", recv);
@@ -185,7 +189,6 @@ public class SimpleRandomSamplingClientTest {
     @Test
     public void recordExecutionTime() throws InterruptedException {
         client.recordExecutionTime(METRIC, 10);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|ms", recv);
@@ -194,7 +197,6 @@ public class SimpleRandomSamplingClientTest {
     @Test
     public void recordExecutionTimeWithSampleRate() throws InterruptedException {
         client.recordExecutionTime(METRIC, 10, 2.1);
-        Thread.sleep(500);
         Assert.assertNull(blockingDeque.poll());
         String recv = blockingDeque.take();
         Assert.assertEquals("prefix.test-METRIC:10|ms|@2.1", recv);
