@@ -8,24 +8,18 @@ import java.util.concurrent.ThreadLocalRandom;
  * which means this client ignores
  */
 public class TimGroupSimpleRandomSamplingClient extends BaseClientImpl {
-    private final double samplingRatio;
-    private final boolean simpleRandomSamplingEnabled;
+    final double samplingRatio;
 
     public TimGroupSimpleRandomSamplingClient(String prefix, MetricSender sender, double samplingRatio) {
-        this(prefix, sender, true, samplingRatio);
+        super(sender);
         if (Double.compare(samplingRatio, 1.0) >= 0) {
             throw new IllegalArgumentException("invalid samplingRatio: must be lower than 1.0");
         }
-    }
-
-    public TimGroupSimpleRandomSamplingClient(String prefix, MetricSender sender, boolean simpleRandomSamplingEnabled, double samplingRatio) {
-        super(sender);
         if (prefix == null || prefix.equals("")) {
             this.prefix = "";
         } else {
             this.prefix = prefix + '.';
         }
-        this.simpleRandomSamplingEnabled = simpleRandomSamplingEnabled;
         this.samplingRatio = samplingRatio;
     }
 
@@ -45,12 +39,7 @@ public class TimGroupSimpleRandomSamplingClient extends BaseClientImpl {
      */
     @Override
     public void count(String aspect, long delta, double sampleRate) {
-        if (!simpleRandomSamplingEnabled) {
-            super.count(aspect, delta, sampleRate);
-            return;
-        }
         //explicitly ignore 'sampleRate'
-        sampleRate = 1.0;
         if (ThreadLocalRandom.current().nextDouble() < samplingRatio) {
             super.count(aspect, delta, samplingRatio);
         }
